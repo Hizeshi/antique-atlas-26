@@ -39,7 +39,11 @@ public class TexturePreviewButton<T> extends ToggleButtonComponent {
 	}
 
 	protected void drawTexture(GuiGraphicsExtractor context, int x, int y) {
-		if (tint != null) context.blit(texture, x, y, 0, v, textureWidth, textureHeight, textureWidth, textureHeight + v); }
+		int tintArgb = tint == null
+			? 0xFFFFFFFF
+			: net.minecraft.util.ARGB.color(255, (int) (tint[0] * 255), (int) (tint[1] * 255), (int) (tint[2] * 255));
+		context.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, x, y, 0f, (float) v, textureWidth, textureHeight, textureWidth, textureHeight, textureWidth, textureHeight + v, tintArgb);
+	}
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float partialTick) {

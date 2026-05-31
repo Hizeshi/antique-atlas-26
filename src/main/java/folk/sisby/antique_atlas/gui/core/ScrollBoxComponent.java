@@ -36,7 +36,7 @@ public class ScrollBoxComponent extends Component {
 		boolean hovered = new Rect2i(x, y, ARROW_SIZE, ARROW_SIZE).contains(mouseX, mouseY);
 		int u = (prev ? 0 : ARROW_SIZE);
 		int v = (vertical ? 0 : ARROW_SIZE) + (hovered ? ARROW_SIZE * 2 : 0);
-		context.blit(ARROW, x, y, u, v, ARROW_SIZE, ARROW_SIZE, ARROW_TEXTURE_WIDTH, ARROW_TEXTURE_HEIGHT);
+		context.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, ARROW, x, y, (float) u, (float) v, ARROW_SIZE, ARROW_SIZE, ARROW_SIZE, ARROW_SIZE, ARROW_TEXTURE_WIDTH, ARROW_TEXTURE_HEIGHT);
 	}
 
 	@Override

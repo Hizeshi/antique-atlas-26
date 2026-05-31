@@ -651,13 +651,13 @@ public class AtlasScreen extends Component implements AtlasRenderer {
 		if (worldAtlasData == null) return;
 
 		context.enableScissor(
-			(int) (guiScale() * (getGuiX() + MAP_BORDER_WIDTH)),
-			(int) (guiScale() * (getGuiY() + MAP_BORDER_HEIGHT)),
-			(int) (guiScale() * mapWidth),
-			(int) (guiScale() * mapHeight)
+			getGuiX() + MAP_BORDER_WIDTH,
+			getGuiY() + MAP_BORDER_HEIGHT,
+			getGuiX() + MAP_BORDER_WIDTH + mapWidth,
+			getGuiY() + MAP_BORDER_HEIGHT + mapHeight
 		);
 
-		renderTiles(new com.mojang.blaze3d.vertex.PoseStack(), null, MAX_LIGHT);
+		renderTiles(context, MAX_LIGHT);
 
 		// Overlay the frame so that edges of the map are smooth:
 		if (fullscreen) {
@@ -745,7 +745,7 @@ public class AtlasScreen extends Component implements AtlasRenderer {
 				boolean hovering = hoveredLandmark == landmark && markerModal.getParent() == null;
 				boolean editable = !landmark.owner().equals(WorldLandmarks.GLOBAL) && SurveyorClient.canModify(landmark.owner());
 				BiFunction<Double, Double, Float> alpha = (x, y) -> state.is(PLACING_MARKER) || (state.is(DELETING_MARKER) && !editable) || (hovering && x <= MAP_BORDER_WIDTH || x >= mapWidth + MAP_BORDER_WIDTH || y <= MAP_BORDER_HEIGHT || y >= mapHeight + MAP_BORDER_HEIGHT) ? 0.5f : 1.0f;
-				renderMarker(new com.mojang.blaze3d.vertex.PoseStack(), null, landmark, texture, 0, MAX_LIGHT, alpha, editable, hovering, markerScale);
+				renderMarker(context, landmark, texture, MAX_LIGHT, alpha, editable, hovering, markerScale);
 			});
 		}
 
@@ -768,7 +768,7 @@ public class AtlasScreen extends Component implements AtlasRenderer {
 			if (!self && !inDim) return;
 			boolean hovering = hoveredFriend == friend && markerModal.getParent() == null;
 			if (state.is(HIDING_MARKERS) && (!playerBookmark.isSelected() || !self)) return;
-			renderPlayer(new com.mojang.blaze3d.vertex.PoseStack(), null, 0, MAX_LIGHT, friend, getEffectiveScale(), state.is(PLACING_MARKER) ? 0.5F : 1.0F, hovering, self);
+			renderPlayer(context, MAX_LIGHT, friend, getEffectiveScale(), state.is(PLACING_MARKER) ? 0.5F : 1.0F, hovering, self);
 		});
 		context.pose().popMatrix();
 

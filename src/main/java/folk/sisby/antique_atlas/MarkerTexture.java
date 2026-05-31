@@ -1,10 +1,6 @@
 package folk.sisby.antique_atlas;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import folk.sisby.antique_atlas.util.DrawBatcher;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -62,33 +58,38 @@ public record MarkerTexture(Identifier id, Identifier accentId, Identifier item,
 	}
 
 	public void drawIcon(GuiGraphicsExtractor context, int x, int y, float[] accent) {
-		context.blit(id, x, y, 0, 0, textureWidth, textureHeight, fullTextureWidth(), textureHeight);
+		var pipeline = net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
+		context.blit(pipeline, id, x, y, 0f, 0f, textureWidth, textureHeight, textureWidth, textureHeight, fullTextureWidth(), textureHeight);
 		if (accentId != null && accent != null) {
-			
-			context.blit(accentId, x, y, 0, 0, textureWidth, textureHeight, fullTextureWidth(), textureHeight);
-			
+			int accentArgb = net.minecraft.util.ARGB.color(255, (int) (accent[0] * 255), (int) (accent[1] * 255), (int) (accent[2] * 255));
+			context.blit(pipeline, accentId, x, y, 0f, 0f, textureWidth, textureHeight, textureWidth, textureHeight, fullTextureWidth(), textureHeight, accentArgb);
 		}
 	}
 
-	public void draw(PoseStack matrices, MultiBufferSource vertexConsumers, double markerX, double markerY, float z, float markerScale, int tileChunks, float[] accent, float tint, float alpha, int light) {
+	public void draw(GuiGraphicsExtractor context, double markerX, double markerY, float markerScale, int tileChunks, float[] accent, float tint, float alpha) {
 		if (alpha == 0) return;
-		matrices.pushPose();
-		matrices.translate(markerX, markerY, 0.0);
-		matrices.scale(markerScale, markerScale, 1.0F);
+		context.pose().pushMatrix();
+		context.pose().translate((float) markerX, (float) markerY);
+		context.pose().scale(markerScale, markerScale);
 		int mainArgb = ARGB.color((int) (alpha * 255), (int) (tint * 255), (int) (tint * 255), (int) (tint * 255));
 		int accentArgb = accent != null ? ARGB.color((int) (alpha * 255), (int) (tint * accent[0] * 255), (int) (tint * accent[1] * 255), (int) (tint * accent[2] * 255)) : 0;
+		var pipeline = net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 		if (tileChunks > 1 && mipLevels > 0) {
 			int mipLevel = Mth.clamp(Mth.ceillog2(tileChunks), 0, mipLevels);
-			DrawBatcher.drawSingle(matrices, vertexConsumers, id, fullTextureWidth(), textureHeight, light, offsetX / (1 << mipLevel), offsetY / (1 << mipLevel), z, textureWidth / (1 << mipLevel), textureHeight / (1 << mipLevel), getU(mipLevel), 0, textureWidth / (1 << mipLevel), textureHeight / (1 << mipLevel), mainArgb, false);
+			int w = textureWidth / (1 << mipLevel);
+			int h = textureHeight / (1 << mipLevel);
+			int ox = offsetX / (1 << mipLevel);
+			int oy = offsetY / (1 << mipLevel);
+			context.blit(pipeline, id, ox, oy, (float) getU(mipLevel), 0f, w, h, w, h, fullTextureWidth(), textureHeight, mainArgb);
 			if (accentId != null && accent != null) {
-				DrawBatcher.drawSingle(matrices, vertexConsumers, accentId, fullTextureWidth(), textureHeight, light, offsetX / (1 << mipLevel), offsetY / (1 << mipLevel), z, textureWidth / (1 << mipLevel), textureHeight / (1 << mipLevel), getU(mipLevel), 0, textureWidth / (1 << mipLevel), textureHeight / (1 << mipLevel), accentArgb, false);
+				context.blit(pipeline, accentId, ox, oy, (float) getU(mipLevel), 0f, w, h, w, h, fullTextureWidth(), textureHeight, accentArgb);
 			}
 		} else {
-			DrawBatcher.drawSingle(matrices, vertexConsumers, id, fullTextureWidth(), textureHeight, light, offsetX, offsetY, z, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight, mainArgb, false);
+			context.blit(pipeline, id, offsetX, offsetY, 0f, 0f, textureWidth, textureHeight, textureWidth, textureHeight, fullTextureWidth(), textureHeight, mainArgb);
 			if (accentId != null && accent != null) {
-				DrawBatcher.drawSingle(matrices, vertexConsumers, accentId, fullTextureWidth(), textureHeight, light, offsetX, offsetY, z, textureWidth, textureHeight, 0, 0, textureWidth, textureHeight, accentArgb, false);
+				context.blit(pipeline, accentId, offsetX, offsetY, 0f, 0f, textureWidth, textureHeight, textureWidth, textureHeight, fullTextureWidth(), textureHeight, accentArgb);
 			}
 		}
-		matrices.popPose();
+		context.pose().popMatrix();
 	}
 }
