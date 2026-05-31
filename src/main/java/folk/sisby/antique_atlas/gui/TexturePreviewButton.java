@@ -50,6 +50,6 @@ public class TexturePreviewButton<T> extends ToggleButtonComponent {
 		int centerY = getGuiY() + (FRAME_SIZE - textureHeight) / 2;
 		drawTexture(context, centerX, centerY);
 
-		super.render(context, mouseX, mouseY, partialTick);
+		super.extractRenderState(context, mouseX, mouseY, partialTick);
 	}
 }

@@ -41,7 +41,7 @@ public class ScrollBoxComponent extends Component {
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float partialTick) {
-		super.render(context, mouseX, mouseY, partialTick);
+		super.extractRenderState(context, mouseX, mouseY, partialTick);
 		if (scrollPos > 0) renderArrow(context, mouseX, mouseY, true);
 		if (scrollPos < getContentSize() - getViewportSize()) renderArrow(context, mouseX, mouseY, false);
 	}

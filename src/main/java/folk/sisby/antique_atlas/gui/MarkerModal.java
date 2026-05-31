@@ -185,7 +185,7 @@ public class MarkerModal extends Component {
 
 	@Override
 	public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean consume) {
-		return super.mouseClicked(event, consume) || textField.mouseClicked(event.x(), event.y(), event.button());
+		return super.mouseClicked(event, consume) || textField.mouseClicked(event, consume);
 	}
 
 	@Override

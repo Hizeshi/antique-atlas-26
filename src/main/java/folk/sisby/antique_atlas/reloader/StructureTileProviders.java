@@ -156,7 +156,7 @@ public class StructureTileProviders extends SimpleJsonResourceReloadListener<com
 			});
 		} else {
 			tags.stream().filter(t -> tagTiles.containsKey(t.location())).findFirst().ifPresent(tag -> {
-				StructureTileProvider provider = tagTiles.get(tag.identifier());
+				StructureTileProvider provider = tagTiles.get(tag.location());
 				provider.getTextures(summary, start.getBoundingBox(), debugPredicates).forEach((pos2, texture) -> {
 					if (structureProviders.containsKey(pos) && structureProviders.get(pos).priority() < provider.priority()) return;
 					outTiles.put(pos2, texture);

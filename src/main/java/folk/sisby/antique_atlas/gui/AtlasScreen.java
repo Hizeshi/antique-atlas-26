@@ -806,7 +806,7 @@ public class AtlasScreen extends Component implements AtlasRenderer {
 			markerModal.setClipped(true);
 			super.extractRenderState(context, mouseX, mouseY, partialTick);
 			markerModal.setClipped(false);
-			markerModal.render(context, trueMouseX, trueMouseY, partialTick);
+			markerModal.extractRenderState(context, trueMouseX, trueMouseY, partialTick);
 		} else {
 			super.extractRenderState(context, mouseX, mouseY, partialTick);
 		}
@@ -816,10 +816,14 @@ public class AtlasScreen extends Component implements AtlasRenderer {
 		if (hoveredLandmark != null) {
 			net.minecraft.network.chat.Component name = hoveredLandmark.get(LandmarkComponentTypes.NAME);
 			if (name != null && !name.getString().isEmpty()) {
-				context.setTooltipForNextFrame(font, Stream.concat(Stream.of(name), hoveredLandmark.getOrDefault(LandmarkComponentTypes.LORE, new ArrayList<net.minecraft.network.chat.Component>()).stream().map(t -> t.copy().withStyle(ChatFormatting.GRAY))).map(net.minecraft.network.chat.FormattedText::of).map(net.minecraft.util.FormattedCharSequence::forward).toList(), 0, 0);
+				List<net.minecraft.network.chat.Component> tooltipLines = Stream.concat(
+					Stream.of(name),
+					hoveredLandmark.getOrDefault(LandmarkComponentTypes.LORE, new ArrayList<net.minecraft.network.chat.Component>()).stream().map(t -> ((net.minecraft.network.chat.Component) t).copy().withStyle(ChatFormatting.GRAY))
+				).toList();
+				context.setTooltipForNextFrame(font, tooltipLines.get(0), 0, 0);
 			}
 		} else if (hoveredFriend != null) {
-			boolean self = hoveredFriend.username().equals(Minecraft.getInstance().player.getGameProfile().getName());
+			boolean self = hoveredFriend.username().equals(Minecraft.getInstance().player.getGameProfile().name());
 			boolean inDim = hoveredFriend.dimension().equals(dim);
 			if (self && inDim) return;
 			context.setTooltipForNextFrame((self ? net.minecraft.network.chat.Component.translatable("gui.antique_atlas.followPlayer") : net.minecraft.network.chat.Component.literal(hoveredFriend.username())).withStyle(hoveredFriend.online() ? (self ? ChatFormatting.WHITE : ChatFormatting.LIGHT_PURPLE) : ChatFormatting.GRAY), 0, 0);
