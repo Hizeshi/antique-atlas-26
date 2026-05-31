@@ -492,7 +492,7 @@ public class AtlasScreen extends Component implements AtlasRenderer {
 	}
 
 	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int lastMouseButton, double deltaX, double deltaY) {
+	public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
 		boolean result = false;
 		if (isDragging) {
 			prevDimScale = 0;
@@ -501,7 +501,7 @@ public class AtlasScreen extends Component implements AtlasRenderer {
 			mapOffsetY += deltaY;
 			result = true;
 		}
-		return super.mouseDragged(mouseX, mouseY, lastMouseButton, deltaX, deltaY) || result;
+		return super.mouseDragged(event, deltaX, deltaY) || result;
 	}
 
 	@Override
