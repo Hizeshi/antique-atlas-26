@@ -1,14 +1,14 @@
 package folk.sisby.antique_atlas.gui.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.opengl.GL11;
 
 /**
  * Displays a texture that changes alpha at regular intervals.
  * By default the texture file is assumed to be full image, but that behavior
- * can be altered by overriding the method {@link #drawImage(DrawContext)}.
+ * can be altered by overriding the method {@link #drawImage(GuiGraphicsExtractor)}.
  *
  * @author Hunternif
  */
@@ -46,23 +46,14 @@ public class BlinkingTextureComponent extends Component {
 	}
 
 	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float partialTick) {
+	public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float partialTick) {
 		long currentTime = System.currentTimeMillis();
 		if (lastTickTime + blinkTime < currentTime) {
 			lastTickTime = currentTime;
 			isVisible = !isVisible;
-		}
-		RenderSystem.setShaderColor(1, 1, 1, isVisible ? visibleAlpha : invisibleAlpha);
-		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		} drawImage(context); }
 
-		drawImage(context);
-
-		RenderSystem.disableBlend();
-		RenderSystem.setShaderColor(1, 1, 1, 1);
-	}
-
-	protected void drawImage(DrawContext context) {
-		context.drawTexture(texture, getGuiX(), getGuiY(), 0, 0, getWidth(), getHeight(), getWidth(), getHeight());
+	protected void drawImage(GuiGraphicsExtractor context) {
+		context.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, getGuiX(), getGuiY(), 0f, 0f, getWidth(), getHeight(), getWidth(), getHeight());
 	}
 }
