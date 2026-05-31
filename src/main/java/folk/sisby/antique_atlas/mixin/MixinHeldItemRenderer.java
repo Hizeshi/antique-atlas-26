@@ -1,14 +1,11 @@
 package folk.sisby.antique_atlas.mixin;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.blaze3d.vertex.PoseStack;
 import folk.sisby.antique_atlas.AntiqueAtlas;
 import folk.sisby.antique_atlas.gui.HandheldAtlasRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,9 +21,6 @@ public class MixinHeldItemRenderer {
 		HandheldAtlasRenderer.fromContext(Minecraft.getInstance().player).renderHandheldAtlas(matrices, submitNodeCollector, light);
 		ci.cancel();
 	}
-
-	@ModifyExpressionValue(method = "renderArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z", ordinal = 0))
-	protected boolean enableFirstPersonAtlasRendering(boolean original, AbstractClientPlayer player, float tickDelta, float pitch, InteractionHand hand, float swingProgress, ItemStack stack, float equipProgress, PoseStack matrices, SubmitNodeCollector submitNodeCollector, int light) {
-		return original || AntiqueAtlas.isHandheldAtlas(stack);
-	}
+	// NOTE: enableFirstPersonAtlasRendering (@ModifyExpressionValue on renderArmWithItem)
+	// removed — renderArmWithItem in MC 26.1.2 no longer calls ItemStack.is(Item).
 }
