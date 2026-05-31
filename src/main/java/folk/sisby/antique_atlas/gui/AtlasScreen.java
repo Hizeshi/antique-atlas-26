@@ -657,8 +657,7 @@ public class AtlasScreen extends Component implements AtlasRenderer {
 			(int) (guiScale() * mapHeight)
 		);
 
-		// NOTE: renderTiles not adapted for Matrix3x2fStack (MC 26.1 GUI rendering change)
-		// renderTiles(context.pose(), null, MAX_LIGHT);
+		renderTiles(new com.mojang.blaze3d.vertex.PoseStack(), null, MAX_LIGHT);
 
 		// Overlay the frame so that edges of the map are smooth:
 		if (fullscreen) {
@@ -746,7 +745,7 @@ public class AtlasScreen extends Component implements AtlasRenderer {
 				boolean hovering = hoveredLandmark == landmark && markerModal.getParent() == null;
 				boolean editable = !landmark.owner().equals(WorldLandmarks.GLOBAL) && SurveyorClient.canModify(landmark.owner());
 				BiFunction<Double, Double, Float> alpha = (x, y) -> state.is(PLACING_MARKER) || (state.is(DELETING_MARKER) && !editable) || (hovering && x <= MAP_BORDER_WIDTH || x >= mapWidth + MAP_BORDER_WIDTH || y <= MAP_BORDER_HEIGHT || y >= mapHeight + MAP_BORDER_HEIGHT) ? 0.5f : 1.0f;
-				// NOTE: renderMarker disabled - Matrix3x2fStack not compatible with PoseStack (MC 26.1 GUI change)
+				renderMarker(new com.mojang.blaze3d.vertex.PoseStack(), null, landmark, texture, 0, MAX_LIGHT, alpha, editable, hovering, markerScale);
 			});
 		}
 
@@ -769,7 +768,7 @@ public class AtlasScreen extends Component implements AtlasRenderer {
 			if (!self && !inDim) return;
 			boolean hovering = hoveredFriend == friend && markerModal.getParent() == null;
 			if (state.is(HIDING_MARKERS) && (!playerBookmark.isSelected() || !self)) return;
-			// NOTE: renderPlayer disabled - Matrix3x2fStack not compatible with PoseStack (MC 26.1 GUI change)
+			renderPlayer(new com.mojang.blaze3d.vertex.PoseStack(), null, 0, MAX_LIGHT, friend, getEffectiveScale(), state.is(PLACING_MARKER) ? 0.5F : 1.0F, hovering, self);
 		});
 		context.pose().popMatrix();
 

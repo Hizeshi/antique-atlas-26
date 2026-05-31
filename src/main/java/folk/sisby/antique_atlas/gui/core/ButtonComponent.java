@@ -17,13 +17,13 @@ public class ButtonComponent extends Component {
 	protected SoundEvent clickSound = SoundEvents.UI_BUTTON_CLICK.value();
 
 	@Override
-	public boolean mouseClicked(double x, double y, int mouseButton) {
+	public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean consume) {
+		double x = event.x(); double y = event.y(); int mouseButton = event.button();
 		if (!isClipped && mouseButton == 0 && isMouseOver(x, y)) {
 			onClick();
 			return true;
 		}
-
-		return super.mouseClicked(x, y, mouseButton);
+		return super.mouseClicked(event, consume);
 	}
 
 	/**
